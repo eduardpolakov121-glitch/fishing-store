@@ -137,6 +137,7 @@
     </header>
 
     <div class="layout">
+
 <section class="stats">
         <div class="stat-card"><div class="label">Замовлень сьогодні</div><div class="value" id="statToday">0</div></div>
         <div class="stat-card"><div class="label">У роботі зараз</div><div class="value" id="statActive">0</div></div>
@@ -145,7 +146,7 @@
       </section>
 
       <section class="toolbar">
-        <input id="searchInput" placeholder="Пошук: ім'я, телефон, місто" autocomplete="off" oninput="applyFilters()">
+        <input id="searchInput" placeholder="Пошук: ім'я, телефон, місто" oninput="applyFilters()">
         <select id="deliveryFilter" onchange="applyFilters()">
           <option value="all">Вся доставка</option>
           <option value="Нова пошта">Нова пошта</option>
