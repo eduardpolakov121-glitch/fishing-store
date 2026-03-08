@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Fishing Store CRM Pro</title>
+  <title>CRM | Рай Рибака</title>
   <style>
     :root{
       --bg:#f5f7fb;
@@ -110,10 +110,10 @@
 <body>
   <div id="authView" class="auth-wrap">
     <div class="auth-card">
-      <h2>Fishing Store CRM Pro</h2>
-      <p>Вхід для адміністратора та оператора.</p>
-      <input id="loginEmail" type="email" placeholder="Email">
-      <input id="loginPassword" type="password" placeholder="Пароль">
+      <h2>Рай Рибака CRM</h2>
+      
+      <input id="loginEmail" type="email" placeholder="Електронна пошта" autocomplete="off" autocapitalize="off" spellcheck="false">
+      <input id="loginPassword" type="password" placeholder="Пароль" autocomplete="new-password">
       <button onclick="loginCRM()">Увійти</button>
       <div id="authError" class="auth-note"></div>
     </div>
@@ -122,10 +122,10 @@
   <div id="appView" class="hidden">
     <header class="app-header">
       <div class="brand">
-        <div class="brand-badge">K</div>
+        <div class="brand-badge">Р</div>
         <div>
-          <h1>Fishing Store CRM Pro</h1>
-          <p>CRM у стилі LP: вкладки по днях, список замовлень, редагована картка.</p>
+          <h1>Рай Рибака CRM</h1>
+          
         </div>
       </div>
       <div class="header-actions">
@@ -137,9 +137,7 @@
     </header>
 
     <div class="layout">
-      <div class="top-note">Закази показуються списком по вкладках. При відкритті карточки можна редагувати дані клієнта, коментарі, етап, статус і суму.</div>
-
-      <section class="stats">
+<section class="stats">
         <div class="stat-card"><div class="label">Замовлень сьогодні</div><div class="value" id="statToday">0</div></div>
         <div class="stat-card"><div class="label">У роботі зараз</div><div class="value" id="statActive">0</div></div>
         <div class="stat-card"><div class="label">Виторг по вибірці</div><div class="value" id="statRevenue">0 грн</div></div>
@@ -147,7 +145,7 @@
       </section>
 
       <section class="toolbar">
-        <input id="searchInput" placeholder="Пошук: ім'я, телефон, місто" oninput="applyFilters()">
+        <input id="searchInput" placeholder="Пошук: ім'я, телефон, місто" autocomplete="off" oninput="applyFilters()">
         <select id="deliveryFilter" onchange="applyFilters()">
           <option value="all">Вся доставка</option>
           <option value="Нова пошта">Нова пошта</option>
