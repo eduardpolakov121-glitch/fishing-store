@@ -34,7 +34,7 @@ window.close();
 
 /* ПОЛУЧЕНИЕ ТОВАРА */
 
-let product = JSON.parse(localStorage.getItem("selectedProduct"));
+let product = JSON.parse(localStorage.getItem("fishing_selectedProduct"));
 
 let container = document.getElementById("product-page");
 
@@ -42,7 +42,7 @@ if(product){
 
 container.innerHTML = `
 
-<img src="${product.img}" 
+<img id="prod-${product.id}" src="${product.img}" 
 style="
 width:100%;
 max-width:500px;

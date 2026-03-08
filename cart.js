@@ -1,12 +1,12 @@
-let cart = JSON.parse(localStorage.getItem("cart")) || [];
+const CART_STORAGE_KEY = "fishing_cart";
 const STORE_SOURCE = "fishing-store";
+
+let cart = JSON.parse(localStorage.getItem(CART_STORAGE_KEY)) || [];
 
 const NOVA_POSHTA_API_KEY = "0cddc3bd30e2e4de2f2ce8f46313a168";
 const NOVA_POSHTA_API_URL = "https://api.novaposhta.ua/v2.0/json/";
 
 let selectedCity = null;
-
-/* КОРЗИНА */
 
 function toggleCart() {
     document.getElementById("cart").classList.toggle("open");
@@ -18,8 +18,47 @@ function closeCart() {
     document.getElementById("cart-overlay").classList.remove("active");
 }
 
+function pulseCartButton() {
+    const btn = document.querySelector('.cart-button');
+    if (!btn) return;
+    btn.classList.remove('cart-bump');
+    void btn.offsetWidth;
+    btn.classList.add('cart-bump');
+}
+
+function animateAddToCart(id) {
+    const card = document.getElementById(`prod-${id}`);
+    const cartButton = document.querySelector('.cart-button');
+    if (!card || !cartButton) {
+        pulseCartButton();
+        return;
+    }
+
+    const image = card.querySelector('img');
+    const source = image || card;
+    const sourceRect = source.getBoundingClientRect();
+    const targetRect = cartButton.getBoundingClientRect();
+
+    const flyer = document.createElement('img');
+    flyer.src = image ? image.src : '';
+    flyer.className = 'flying-product';
+    flyer.style.left = sourceRect.left + 'px';
+    flyer.style.top = sourceRect.top + 'px';
+    flyer.style.width = sourceRect.width + 'px';
+    flyer.style.height = sourceRect.height + 'px';
+    flyer.style.setProperty('--move-x', (targetRect.left - sourceRect.left) + 'px');
+    flyer.style.setProperty('--move-y', (targetRect.top - sourceRect.top) + 'px');
+
+    document.body.appendChild(flyer);
+
+    flyer.addEventListener('animationend', () => {
+        flyer.remove();
+        pulseCartButton();
+    }, { once: true });
+}
+
 function addToCart(id) {
-    let qtyInput = document.getElementById("qty-" + id);
+    let qtyInput = document.getElementById('qty-' + id);
     let qty = parseInt(qtyInput ? qtyInput.value : 1, 10);
 
     if (isNaN(qty) || qty < 1) qty = 1;
@@ -35,9 +74,10 @@ function addToCart(id) {
         cart.push({ ...product, qty });
     }
 
+    animateAddToCart(id);
     renderCart();
     saveCart();
-    showToast("Товар додано в кошик");
+    showToast('Товар додано в кошик');
 }
 
 function cartPlus(id) {
@@ -64,13 +104,13 @@ function cartMinus(id) {
 }
 
 function renderCart() {
-    let items = document.getElementById("cart-items");
-    let count = document.getElementById("cart-count");
-    let total = document.getElementById("total");
+    let items = document.getElementById('cart-items');
+    let count = document.getElementById('cart-count');
+    let total = document.getElementById('total');
 
     if (!items || !count || !total) return;
 
-    items.innerHTML = "";
+    items.innerHTML = '';
 
     let sum = 0;
     let qty = 0;
@@ -95,52 +135,46 @@ function renderCart() {
     });
 
     count.innerText = qty;
-    total.innerText = "Разом: " + sum + " грн";
+    total.innerText = 'Разом: ' + sum + ' грн';
 }
-
-/* МОДАЛКА */
 
 function checkout() {
     if (cart.length === 0) {
-        alert("Кошик порожній");
+        alert('Кошик порожній');
         return;
     }
 
-    document.getElementById("checkout-modal").classList.add("open");
+    document.getElementById('checkout-modal').classList.add('open');
     handleDeliveryTypeChange();
 }
 
 function closeCheckoutModal() {
-    document.getElementById("checkout-modal").classList.remove("open");
+    document.getElementById('checkout-modal').classList.remove('open');
 }
 
-/* ПЕРЕКЛЮЧЕНИЕ ДОСТАВКИ */
-
 function handleDeliveryTypeChange() {
-    let delivery = document.getElementById("order-delivery").value;
+    let delivery = document.getElementById('order-delivery').value;
 
-    let npCityWrap = document.getElementById("np-city-wrap");
-    let npWarehouseWrap = document.getElementById("np-warehouse-wrap");
-    let ukrWrap = document.getElementById("ukrposhta-wrap");
+    let npCityWrap = document.getElementById('np-city-wrap');
+    let npWarehouseWrap = document.getElementById('np-warehouse-wrap');
+    let ukrWrap = document.getElementById('ukrposhta-wrap');
 
-    if (delivery === "Нова пошта") {
-        npCityWrap.style.display = "block";
-        npWarehouseWrap.style.display = "block";
-        ukrWrap.style.display = "none";
+    if (delivery === 'Нова пошта') {
+        npCityWrap.style.display = 'block';
+        npWarehouseWrap.style.display = 'block';
+        ukrWrap.style.display = 'none';
     } else {
-        npCityWrap.style.display = "none";
-        npWarehouseWrap.style.display = "none";
-        ukrWrap.style.display = "block";
+        npCityWrap.style.display = 'none';
+        npWarehouseWrap.style.display = 'none';
+        ukrWrap.style.display = 'block';
     }
 }
 
-/* API НОВОЙ ПОЧТЫ */
-
 async function callNP(model, method, props) {
     let res = await fetch(NOVA_POSHTA_API_URL, {
-        method: "POST",
+        method: 'POST',
         headers: {
-            "Content-Type": "application/json"
+            'Content-Type': 'application/json'
         },
         body: JSON.stringify({
             apiKey: NOVA_POSHTA_API_KEY,
@@ -153,7 +187,7 @@ async function callNP(model, method, props) {
     let data = await res.json();
 
     if (!data.success) {
-        console.error("Nova Poshta API error:", data);
+        console.error('Nova Poshta API error:', data);
         return [];
     }
 
@@ -161,70 +195,52 @@ async function callNP(model, method, props) {
 }
 
 async function loadWarehouses(cityRef) {
-    return await callNP(
-        "AddressGeneral",
-        "getWarehouses",
-        {
-            CityRef: cityRef
-        }
-    );
+    return await callNP('AddressGeneral', 'getWarehouses', { CityRef: cityRef });
 }
 
-/* ПОИСК ГОРОДА */
-
 async function handleCityInput() {
-    let input = document.getElementById("order-city");
-    let list = document.getElementById("city-suggestions");
+    let input = document.getElementById('order-city');
+    let list = document.getElementById('city-suggestions');
     let val = input.value.trim();
 
     selectedCity = null;
-    resetWarehouses("Оберіть відділення");
+    resetWarehouses('Оберіть відділення');
 
     if (val.length < 2) {
-        list.style.display = "none";
-        list.innerHTML = "";
+        list.style.display = 'none';
+        list.innerHTML = '';
         return;
     }
 
-    let result = await callNP(
-        "Address",
-        "searchSettlements",
-        {
-            CityName: val,
-            Limit: 20
-        }
-    );
+    let result = await callNP('Address', 'searchSettlements', { CityName: val, Limit: 20 });
 
-    list.innerHTML = "";
+    list.innerHTML = '';
 
     if (!result.length) {
-        list.style.display = "none";
+        list.style.display = 'none';
         return;
     }
 
-    list.style.display = "block";
+    list.style.display = 'block';
 
     result.forEach(item => {
         if (!item.Addresses || !item.Addresses.length) return;
 
         item.Addresses.forEach(city => {
-            let cityName = city.Present || city.MainDescription || city.Description || "Місто";
-            let cityRefForWarehouses = city.DeliveryCity || city.Ref || "";
+            let cityName = city.Present || city.MainDescription || city.Description || 'Місто';
+            let cityRefForWarehouses = city.DeliveryCity || city.Ref || '';
 
             if (!cityRefForWarehouses) return;
 
-            let div = document.createElement("div");
-            div.className = "np-suggestion-item";
+            let div = document.createElement('div');
+            div.className = 'np-suggestion-item';
             div.innerText = cityName;
 
             div.onclick = async () => {
                 input.value = cityName;
-                selectedCity = {
-                    name: cityName,
-                    ref: cityRefForWarehouses
-                };
-                list.style.display = "none";
-                list.innerHTML = "";
+                selectedCity = { name: cityName, ref: cityRefForWarehouses };
+                list.style.display = 'none';
+                list.innerHTML = '';
                 await fillWarehouses(cityRefForWarehouses);
             };
 
@@ -233,94 +249,90 @@ async function handleCityInput() {
     });
 }
 
-/* ОТДЕЛЕНИЯ */
-
 function resetWarehouses(text) {
-    let select = document.getElementById("order-address");
+    let select = document.getElementById('order-address');
     if (!select) return;
     select.innerHTML = `<option value="">${text}</option>`;
 }
 
 async function fillWarehouses(cityRef) {
-    let select = document.getElementById("order-address");
+    let select = document.getElementById('order-address');
 
-    resetWarehouses("Завантаження...");
+    resetWarehouses('Завантаження...');
 
     let warehouses = await loadWarehouses(cityRef);
 
     if (!warehouses.length) {
-        resetWarehouses("Немає відділень");
+        resetWarehouses('Немає відділень');
         return;
     }
 
-    select.innerHTML = `<option value="">Оберіть відділення</option>`;
+    select.innerHTML = '<option value="">Оберіть відділення</option>';
 
     warehouses.forEach(w => {
-        let text = w.Description || w.ShortAddress || "Відділення";
-        let option = document.createElement("option");
+        let text = w.Description || w.ShortAddress || 'Відділення';
+        let option = document.createElement('option');
         option.value = text;
         option.innerText = text;
         select.appendChild(option);
     });
 }
 
-/* ОТПРАВКА */
-
 async function submitCheckout() {
-    let name = document.getElementById("order-name").value.trim();
-    let surname = document.getElementById("order-surname").value.trim();
-    let phone = document.getElementById("order-phone").value.trim();
-    let delivery = document.getElementById("order-delivery").value;
+    let name = document.getElementById('order-name').value.trim();
+    let surname = document.getElementById('order-surname').value.trim();
+    let phone = document.getElementById('order-phone').value.trim();
+    let delivery = document.getElementById('order-delivery').value;
 
-    let city = "";
-    let address = "";
+    let city = '';
+    let address = '';
 
     if (!name || !surname || !phone) {
-        alert("Заповніть всі поля");
+        alert('Заповніть всі поля');
         return;
     }
 
-    if (delivery === "Нова пошта") {
-        city = document.getElementById("order-city").value.trim();
-        address = document.getElementById("order-address").value;
+    if (delivery === 'Нова пошта') {
+        city = document.getElementById('order-city').value.trim();
+        address = document.getElementById('order-address').value;
 
         if (!city || !selectedCity) {
-            alert("Оберіть місто зі списку");
+            alert('Оберіть місто зі списку');
             return;
         }
 
         if (!address) {
-            alert("Оберіть відділення");
+            alert('Оберіть відділення');
             return;
         }
     }
 
-    if (delivery === "Укрпошта") {
-        city = document.getElementById("order-city-manual").value.trim();
-        let index = document.getElementById("order-index").value.trim();
+    if (delivery === 'Укрпошта') {
+        city = document.getElementById('order-city-manual').value.trim();
+        let index = document.getElementById('order-index').value.trim();
 
         if (!city) {
-            alert("Вкажіть місто");
+            alert('Вкажіть місто');
             return;
         }
 
         if (!index) {
-            alert("Вкажіть поштовий індекс");
+            alert('Вкажіть поштовий індекс');
             return;
         }
 
-        address = "Індекс: " + index;
+        address = 'Індекс: ' + index;
     }
 
     let order = {
-        name: name + " " + surname,
+        name: name + ' ' + surname,
         phone: phone,
         city: city,
         delivery: delivery,
         address: address,
         items: cart,
         total: cart.reduce((s, p) => s + p.price * p.qty, 0),
-        status: "Новий",
+        status: 'Новий',
         source: STORE_SOURCE
     };
 
@@ -331,48 +343,42 @@ async function submitCheckout() {
         saveCart();
         renderCart();
 
-        document.getElementById("order-name").value = "";
-        document.getElementById("order-surname").value = "";
-        document.getElementById("order-phone").value = "";
-        document.getElementById("order-city").value = "";
-        document.getElementById("order-city-manual").value = "";
-        document.getElementById("order-index").value = "";
+        document.getElementById('order-name').value = '';
+        document.getElementById('order-surname').value = '';
+        document.getElementById('order-phone').value = '';
+        document.getElementById('order-city').value = '';
+        document.getElementById('order-city-manual').value = '';
+        document.getElementById('order-index').value = '';
 
-        resetWarehouses("Оберіть відділення");
+        resetWarehouses('Оберіть відділення');
         selectedCity = null;
 
         closeCheckoutModal();
         closeCart();
 
-        alert("Замовлення оформлено");
+        alert('Замовлення оформлено');
     } catch (error) {
         console.error(error);
-        alert("Помилка CRM: " + error.message);
+        alert('Помилка CRM: ' + error.message);
     }
 }
 
-/* TOAST */
-
 function showToast(text) {
-    let t = document.createElement("div");
+    let t = document.createElement('div');
 
-    t.style.position = "fixed";
-    t.style.bottom = "20px";
-    t.style.right = "20px";
-    t.style.background = "#ff6600";
-    t.style.color = "white";
-    t.style.padding = "12px 20px";
-    t.style.borderRadius = "10px";
-    t.style.zIndex = "9999";
-
+    t.style.position = 'fixed';
+    t.style.bottom = '20px';
+    t.style.right = '20px';
+    t.style.background = '#ff6600';
+    t.style.color = 'white';
+    t.style.padding = '12px 20px';
+    t.style.borderRadius = '10px';
+    t.style.zIndex = '9999';
     t.innerText = text;
 
     document.body.appendChild(t);
-
     setTimeout(() => t.remove(), 2000);
 }
-
-/* SAVE */
 
 function clearCart() {
     cart = [];
@@ -381,33 +387,31 @@ function clearCart() {
 }
 
 function saveCart() {
-    localStorage.setItem("cart", JSON.stringify(cart));
+    localStorage.setItem(CART_STORAGE_KEY, JSON.stringify(cart));
 }
-
-/* INIT */
 
 renderCart();
 
-document.addEventListener("DOMContentLoaded", () => {
-    let cityInput = document.getElementById("order-city");
-    let list = document.getElementById("city-suggestions");
+document.addEventListener('DOMContentLoaded', () => {
+    let cityInput = document.getElementById('order-city');
+    let list = document.getElementById('city-suggestions');
 
     handleDeliveryTypeChange();
 
     if (cityInput) {
-        cityInput.addEventListener("input", handleCityInput);
+        cityInput.addEventListener('input', handleCityInput);
     }
 
     if (cityInput && list) {
-        cityInput.addEventListener("blur", () => {
+        cityInput.addEventListener('blur', () => {
             setTimeout(() => {
-                list.style.display = "none";
+                list.style.display = 'none';
             }, 200);
         });
 
-        cityInput.addEventListener("focus", () => {
-            if (list.innerHTML.trim() !== "") {
-                list.style.display = "block";
+        cityInput.addEventListener('focus', () => {
+            if (list.innerHTML.trim() !== '') {
+                list.style.display = 'block';
             }
         });
     }

@@ -305,7 +305,7 @@ function login() {
 }
 
 function saveLocalProducts() {
-    localStorage.setItem("products", JSON.stringify(products));
+    localStorage.setItem("fishing_products", JSON.stringify(products));
 }
 
 function clearForm() {
@@ -314,7 +314,7 @@ function clearForm() {
     document.getElementById("prodPrice").value = "";
     document.getElementById("prodOld").value = "";
     document.getElementById("prodDesc").value = "";
-    document.getElementById("prodCategory").value = "toy";
+    document.getElementById("prodCategory").value = "rod";
     document.getElementById("prodFile").value = "";
 
     document.getElementById("previewImg").src = "";
@@ -438,7 +438,7 @@ function editProduct(id) {
     document.getElementById("prodPrice").value = p.price || "";
     document.getElementById("prodOld").value = p.old || "";
     document.getElementById("prodDesc").value = p.description || "";
-    document.getElementById("prodCategory").value = p.category || "toy";
+    document.getElementById("prodCategory").value = p.category || "rod";
 
     showPreview(p.img || "");
 

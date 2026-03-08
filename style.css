@@ -454,3 +454,37 @@ flex-direction:column;
 width:100%;
 }
 }
+
+.flying-product{
+position:fixed;
+object-fit:cover;
+border-radius:12px;
+pointer-events:none;
+z-index:99999;
+box-shadow:0 10px 24px rgba(0,0,0,0.22);
+animation:flyToCart 0.75s ease-in-out forwards;
+}
+
+.cart-bump{
+animation:cartBump 0.45s ease;
+}
+
+@keyframes flyToCart{
+0%{
+transform:translate(0,0) scale(1) rotate(0deg);
+opacity:1;
+}
+70%{
+opacity:0.95;
+}
+100%{
+transform:translate(var(--move-x),var(--move-y)) scale(0.18) rotate(12deg);
+opacity:0;
+}
+}
+
+@keyframes cartBump{
+0%{transform:scale(1);}
+40%{transform:scale(1.15);}
+100%{transform:scale(1);}
+}

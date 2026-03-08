@@ -51,7 +51,7 @@ function openProduct(id) {
 
     if (!product) return;
 
-    localStorage.setItem("selectedProduct", JSON.stringify(product));
+    localStorage.setItem("fishing_selectedProduct", JSON.stringify(product));
 
     window.open("product.html", "_blank");
 }

@@ -1,4 +1,6 @@
-let products = JSON.parse(localStorage.getItem("products")) || [];
+const PRODUCTS_STORAGE_KEY = "fishing_products";
+
+let products = JSON.parse(localStorage.getItem(PRODUCTS_STORAGE_KEY)) || [];
 
 if (products.length === 0) {
     products = [
@@ -76,9 +78,9 @@ if (products.length === 0) {
         }
     ];
 
-    localStorage.setItem("products", JSON.stringify(products));
+    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
 }
 
 function saveProducts() {
-    localStorage.setItem("products", JSON.stringify(products));
+    localStorage.setItem(PRODUCTS_STORAGE_KEY, JSON.stringify(products));
 }
