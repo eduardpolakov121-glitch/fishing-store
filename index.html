@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="uk">
+
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Fishing Store</title>
+<link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+
+<div id="cart-overlay" class="cart-overlay" onclick="closeCart()"></div>
+
+<header>
+    <div class="logo">Fishing Store</div>
+    <input id="search" placeholder="🔍 Пошук товару">
+    <div class="cart-button" onclick="toggleCart()">
+        🛒 <span id="cart-count">0</span>
+    </div>
+</header>
+
+<div class="banner">
+    <img src="banner.jpg" alt="Fishing Store banner">
+</div>
+
+<div class="container">
+
+    <aside class="sidebar">
+        <h3>Каталог</h3>
+        <ul>
+            <li onclick="filterCategory('all')">Всі товари</li>
+            <li onclick="filterCategory('rod')">🎣 Вудилища</li>
+            <li onclick="filterCategory('reel')">🌀 Котушки</li>
+            <li onclick="filterCategory('lure')">🐟 Приманки</li>
+            <li onclick="filterCategory('line')">🧵 Шнури та ліска</li>
+            <li onclick="filterCategory('hook')">🪝 Гачки та оснастка</li>
+            <li onclick="filterCategory('bag')">🎒 Сумки та коробки</li>
+            <li onclick="filterCategory('camp')">⛺ Кемпінг</li>
+            <li onclick="filterCategory('boat')">🚤 Ехолоти та човен</li>
+        </ul>
+    </aside>
+
+    <main>
+        <div class="filters">
+            <select onchange="sortProducts(this.value)">
+                <option value="">Сортувати</option>
+                <option value="cheap">Дешеві → дорогі</option>
+                <option value="expensive">Дорогі → дешеві</option>
+                <option value="name">По назві</option>
+            </select>
+        </div>
+
+        <div id="products" class="products"></div>
+    </main>
+
+</div>
+
+<div id="cart" class="cart">
+    <h2>Кошик</h2>
+
+    <div id="cart-items"></div>
+
+    <h3 id="total"></h3>
+
+    <button onclick="clearCart()">Очистити</button>
+    <button onclick="checkout()">Оформити</button>
+
+    <br><br>
+
+    <button onclick="closeCart()">👉 Продовжити пошук</button>
+</div>
+
+<div id="checkout-modal" class="checkout-modal">
+    <div class="checkout-box">
+        <h2>Оформлення замовлення</h2>
+
+        <input type="text" id="order-name" placeholder="Ім'я">
+        <input type="text" id="order-surname" placeholder="Прізвище">
+        <input type="tel" id="order-phone" placeholder="Телефон">
+
+        <select id="order-delivery" onchange="handleDeliveryTypeChange()">
+            <option value="Нова пошта">Нова пошта</option>
+            <option value="Укрпошта">Укрпошта</option>
+        </select>
+
+        <div id="np-city-wrap" class="np-field-wrap">
+            <input type="text" id="order-city" placeholder="Почніть вводити місто">
+            <div id="city-suggestions" class="np-suggestions"></div>
+        </div>
+
+        <div id="np-warehouse-wrap" class="np-field-wrap">
+            <select id="order-address">
+                <option value="">Спочатку оберіть місто</option>
+            </select>
+        </div>
+
+        <div id="ukrposhta-wrap" style="display:none;">
+            <input type="text" id="order-city-manual" placeholder="Місто">
+            <input type="text" id="order-index" placeholder="Поштовий індекс">
+        </div>
+
+        <div class="checkout-actions">
+            <button onclick="submitCheckout()">Підтвердити</button>
+            <button class="secondary-btn" onclick="closeCheckoutModal()">Скасувати</button>
+        </div>
+    </div>
+</div>
+
+<div class="social">
+    <a href="viber://chat?number=380684221803">Viber</a>
+    <a href="https://t.me/380684221803">Telegram</a>
+    <a href="https://www.instagram.com/">Instagram</a>
+</div>
+
+<script src="products.js"></script>
+<script src="crm.js"></script>
+<script src="cart.js"></script>
+<script src="script.js"></script>
+
+</body>
+</html>
